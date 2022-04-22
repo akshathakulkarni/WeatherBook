@@ -1,16 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchWeatherAction } from "./redux/slices/weatherSlices";
 import weatherSVG from "./img/weather.svg";
 
 //display icon https://openweathermap.org/img/wn/${icon}.png
 function App() {
+  const [ city, setCity ] = useState('Ottawa');
   //dispatch action
   const dispatch = useDispatch();
   // console.log(process.env.REACT_APP_OPEN_WEATHER_KEY)
   // console.log(process.env.SECOND_VALUE);
   useEffect(() => {
-    dispatch(fetchWeatherAction("Ottawa"));
+    dispatch(fetchWeatherAction('Ottawa'));
+    setCity("");
   }, []);
 
   //select state from store
@@ -37,6 +39,9 @@ function App() {
           </p>
           {/* Input */}
           <input
+            value={city}
+            onChange={(event) => setCity(event.target.value)}
+            
             placeholder="Search City"
             class="relative z-10 inline-block w-full md:w-auto mb-2  px-3 py-2 mr-4  font-medium leading-normal bg-transparent border-2 rounded-lg text-red-400 "
           ></input>
@@ -44,12 +49,18 @@ function App() {
           <button
             type="button"
             className="inline-flex items-center px-3 pr-3 28 text-center py-3 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={() => dispatch(fetchWeatherAction(city))}
           >
             Search
           </button>
         </div>
         {/* Content goes here */}
-        <div class="max-w-6xl px-4 mx-auto ">
+        {loading ? (
+          <h1 className='text-gray-400 text-4xl text-center'>Laoding please wait...</h1>
+        ) : error ? (
+          <h1 className='text-red-400 text-4xl text-center'>{error?.message}</h1>
+        ) : (
+          <div class="max-w-6xl px-4 mx-auto ">
           <div class="flex flex-wrap -mx-4 justify-center">
             <div class="w-full md:w-1/3 px-4">
               <div class="p-8 border border-blue-800 rounded-lg">
@@ -97,6 +108,7 @@ function App() {
             </div>
           </div>
         </div>
+        )}
       </section>
       {/* Footer */}
       {/* <div class="text-center bg-red-900">
